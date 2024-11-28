@@ -9,7 +9,7 @@ pacman::p_load('ggplot2', 'ggrepel', 'showtext', 'readr', 'dplyr', 'janitor')
 ## Loading data (available at OWID website)
 
 owid <- readr::read_csv(
-  "https://github.com/viniciusoike/restateinsight/raw/main/static/data/gdp-vs-happiness.csv"
+  "Downloads/gdp-vs-happiness.csv"
 )
 
 ## Cleaning the data 
@@ -47,7 +47,7 @@ ggplot(owid1, aes(x = gdppc, y = life_satisfaction)) +
     color = "#A5A9A9",
     alpha = 0.8,
     shape = 21
-  ) # https://ggplot2.tidyverse.org/articles/ggplot2-specs.html 21 shape 
+  )
 
 ## Plot: Highlights 
 
@@ -153,5 +153,42 @@ base +
     legend.text = element_text(size = 11),
     plot.margin = margin(rep(11, 5))
   )
+
+## Final Plot 
+
+ggplot(owid1, aes(x = gdppc, y = life_satisfaction)) +
+  geom_point(
+    aes(fill = continent, size = pop),
+    color = "gray0",
+    alpha = 0.8,
+    shape = 21
+  ) +
+  ggrepel::geom_label_repel(
+    data = highlights,
+    aes(x = gdppc, y = life_satisfaction, label = highlight, color = continent),
+    size = 3,
+    force = 5,
+    family = "Lato",
+    label.padding = unit(0.05, "lines"),
+    label.size = NA
+  ) +
+  scale_x_continuous(breaks = xbreaks, labels = xlabels) +
+  scale_y_continuous(breaks = 3:7) +
+  scale_size_continuous(range = c(1, 15)) +
+  scale_fill_manual(name = "", values = colors) +
+  scale_color_manual(name = "", values = colors) +
+  guides(
+    color = "none",
+    size = "none",
+    fill = guide_legend(override.aes = list(shape = 21, alpha = 1))
+  ) +
+  labs(
+    title = "Self-reported life satisfaction vs. GDP per capita, 2022",
+    subtitle = subtitle,
+    x = "GDP per capita",
+    y = "Life satisfaction (country average; 0-10)",
+    caption = caption
+  ) +
+  theme 
 
 
